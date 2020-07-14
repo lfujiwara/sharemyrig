@@ -1,0 +1,21 @@
+{
+  "[typescript]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.formatOnSave": true,
+  "cSpell.words": [
+    "ESNEXT",
+    "Hrefs",
+    "downlevel",
+    "lcov",
+    "sharemyrig",
+    "sourcemap",
+    "tslib",
+    "typechecking"
+  ]
+}
