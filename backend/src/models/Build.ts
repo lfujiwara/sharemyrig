@@ -1,7 +1,7 @@
 import { IComponent } from './Component'
 import { IUser } from './User'
 
-export interface Build {
+export interface IBuild {
   cpu?: IComponent
   cpuCooler?: IComponent
   gpus: [IComponent]
