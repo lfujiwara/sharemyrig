@@ -16,6 +16,8 @@
     "sharemyrig",
     "sourcemap",
     "tslib",
-    "typechecking"
+    "typechecking",
+    "Hrefs",
+    "downlevel"
   ]
 }
