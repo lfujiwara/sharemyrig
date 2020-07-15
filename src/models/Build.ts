@@ -23,25 +23,28 @@ export interface IBuild {
   creatorId?: String
 }
 
-export const validateBuildSchema = Joi.object().keys({
-  cpu: validateComponentSchema.required(),
-  cpuCooler: Joi.array().items(validateComponentSchema),
-  gpus: Joi.array().items(validateComponentSchema),
-  motherboard: validateComponentSchema.required(),
-  memory: Joi.array().items(validateComponentSchema).min(1),
-  storageDrives: Joi.array().items(validateComponentSchema).min(1),
-  case: validateComponentSchema,
-  psu: validateComponentSchema.required(),
-  accessories: Joi.array().items(validateComponentSchema),
-  monitors: Joi.array().items(validateComponentSchema),
-  headphone: validateComponentSchema,
-  microphone: validateComponentSchema,
-  keyboard: validateComponentSchema,
-  soundCard: validateComponentSchema,
-  mouse: validateComponentSchema,
-  mousePad: validateComponentSchema,
-  creatorId: Joi.string(),
-})
+export const validateBuildSchema = Joi.object()
+  .keys({
+    _id: Joi.string(),
+    cpu: validateComponentSchema.required(),
+    cpuCooler: Joi.array().items(validateComponentSchema),
+    gpus: Joi.array().items(validateComponentSchema),
+    motherboard: validateComponentSchema.required(),
+    memory: Joi.array().items(validateComponentSchema).min(1),
+    storageDrives: Joi.array().items(validateComponentSchema).min(1),
+    case: validateComponentSchema,
+    psu: validateComponentSchema.required(),
+    accessories: Joi.array().items(validateComponentSchema),
+    monitors: Joi.array().items(validateComponentSchema),
+    headphone: validateComponentSchema,
+    microphone: validateComponentSchema,
+    keyboard: validateComponentSchema,
+    soundCard: validateComponentSchema,
+    mouse: validateComponentSchema,
+    mousePad: validateComponentSchema,
+    creatorId: Joi.string(),
+  })
+  .unknown(true)
 
 const BuildSchema = new mongoose.Schema({
   cpu: { type: ComponentSchema, required: true },

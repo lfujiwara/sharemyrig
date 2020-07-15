@@ -16,14 +16,17 @@ export interface IComponent {
   details: [IComponentDetail]
 }
 
-export const validateComponentSchema = Joi.object().keys({
-  description: Joi.string().min(1).required(),
-  price: Joi.number().min(0.01),
-  storeName: Joi.string(),
-  href: Joi.string(),
-  imageHrefs: Joi.array().items(Joi.string()),
-  details: Joi.object(),
-})
+export const validateComponentSchema = Joi.object()
+  .keys({
+    _id: Joi.string(),
+    description: Joi.string().min(1).required(),
+    price: Joi.number().min(0.01),
+    storeName: Joi.string(),
+    href: Joi.string(),
+    imageHrefs: Joi.array().items(Joi.string()),
+    details: Joi.object(),
+  })
+  .unknown(true)
 
 export const ComponentSchema = new mongoose.Schema({
   description: {
@@ -38,5 +41,5 @@ export const ComponentSchema = new mongoose.Schema({
     default: [],
     required: true,
   },
-  details: [Object],
+  details: Object,
 })

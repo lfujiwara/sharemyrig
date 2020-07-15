@@ -13,7 +13,7 @@ export default class BuildController {
     this.router.post('', celebrate({ [Segments.BODY]: validateBuildSchema }), BuildController.indexPost)
   }
 
-  static async indexPost(request: express.Request & { body: CreateBuildRequestDto }, response: express.Response) {
+  static async indexPost(request: CreateBuildRequestDto, response: express.Response) {
     try {
       const build = await Build.create(request.body)
       response.status(HttpStatus.CREATED).json(build)
