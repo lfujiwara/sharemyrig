@@ -1,17 +1,17 @@
-import mongoose from 'mongoose'
-import { IComponent, ComponentSchema } from './Component'
-import { IUser, UserSchema } from './User'
+import mongoose, { Schema } from 'mongoose'
+import { Joi } from 'celebrate'
+import { IComponent, ComponentSchema, validateComponentSchema } from './Component'
 
 export interface IBuild {
   _id?: String
-  cpu?: IComponent
+  cpu: IComponent
   cpuCooler?: IComponent
   gpus: [IComponent]
-  motherboard?: IComponent
+  motherboard: IComponent
   memory: [IComponent]
   storageDrives: [IComponent]
   case?: IComponent
-  psu?: IComponent
+  psu: IComponent
   accessories: [IComponent]
   monitors: [IComponent]
   headphone?: IComponent
@@ -20,13 +20,33 @@ export interface IBuild {
   soundCard?: IComponent
   mouse?: IComponent
   mousePad?: IComponent
-  url?: String
-  creator?: IUser
+  creatorId?: String
 }
 
+export const validateBuildSchema = Joi.object().keys({
+  cpu: validateComponentSchema.required(),
+  cpuCooler: Joi.array().items(validateComponentSchema),
+  gpus: Joi.array().items(validateComponentSchema),
+  motherboard: validateComponentSchema.required(),
+  memory: Joi.array().items(validateComponentSchema).min(1),
+  storageDrives: Joi.array().items(validateComponentSchema).min(1),
+  case: validateComponentSchema,
+  psu: validateComponentSchema.required(),
+  accessories: Joi.array().items(validateComponentSchema),
+  monitors: Joi.array().items(validateComponentSchema),
+  headphone: validateComponentSchema,
+  microphone: validateComponentSchema,
+  keyboard: validateComponentSchema,
+  soundCard: validateComponentSchema,
+  mouse: validateComponentSchema,
+  mousePad: validateComponentSchema,
+  creatorId: Joi.string(),
+})
+
 const BuildSchema = new mongoose.Schema({
-  cpu: ComponentSchema,
+  cpu: { type: ComponentSchema, required: true },
   cpuCooler: ComponentSchema,
+  motherboard: { type: ComponentSchema, required: true },
   gpus: {
     type: [ComponentSchema],
     required: true,
@@ -43,7 +63,7 @@ const BuildSchema = new mongoose.Schema({
     default: [],
   },
   case: ComponentSchema,
-  psu: ComponentSchema,
+  psu: { type: ComponentSchema, required: true },
   accessories: {
     type: [ComponentSchema],
     required: true,
@@ -59,8 +79,7 @@ const BuildSchema = new mongoose.Schema({
   keyboard: ComponentSchema,
   mouse: ComponentSchema,
   mousePad: ComponentSchema,
-  url: String,
-  creator: UserSchema,
+  creatorId: { type: Schema.Types.ObjectId, ref: 'User' },
 })
 
-export default mongoose.model('Build', BuildSchema)
+export default mongoose.model<IBuild & mongoose.Document>('Build', BuildSchema)

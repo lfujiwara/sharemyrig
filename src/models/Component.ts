@@ -1,4 +1,11 @@
 import mongoose from 'mongoose'
+import { Joi } from 'celebrate'
+
+interface IComponentDetail {
+  key: String
+  value: String
+}
+
 export interface IComponent {
   _id?: String
   description: String
@@ -6,9 +13,17 @@ export interface IComponent {
   storeName?: String
   href?: String
   imageHrefs: [String]
+  details: [IComponentDetail]
 }
 
-export function isComponentValid(obj) {}
+export const validateComponentSchema = Joi.object().keys({
+  description: Joi.string().min(1).required(),
+  price: Joi.number().min(0.01),
+  storeName: Joi.string(),
+  href: Joi.string(),
+  imageHrefs: Joi.array().items(Joi.string()),
+  details: Joi.object(),
+})
 
 export const ComponentSchema = new mongoose.Schema({
   description: {
@@ -23,4 +38,5 @@ export const ComponentSchema = new mongoose.Schema({
     default: [],
     required: true,
   },
+  details: [Object],
 })
