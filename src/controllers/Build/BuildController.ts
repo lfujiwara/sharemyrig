@@ -1,4 +1,4 @@
-import { celebrate, Segments } from 'celebrate'
+import { celebrate, Segments, errors } from 'celebrate'
 import express from 'express'
 import HttpStatus from 'http-status-codes'
 import CreateBuildRequestDto from './dto/request/CreateBuildRequestDto'
@@ -11,8 +11,8 @@ export default class BuildController {
   constructor() {
     this.router = express.Router()
 
-    this.router.post('', celebrate({ [Segments.BODY]: validateBuildSchema }), BuildController.indexPost)
-    this.router.put('', celebrate({ [Segments.BODY]: validateBuildSchema }), BuildController.indexPut)
+    this.router.post('', celebrate({ [Segments.BODY]: validateBuildSchema }), errors(), BuildController.indexPost)
+    this.router.put('', celebrate({ [Segments.BODY]: validateBuildSchema }), errors(), BuildController.indexPut)
   }
 
   static async indexPost(request: CreateBuildRequestDto, response: CreateBuildResponseDto) {
