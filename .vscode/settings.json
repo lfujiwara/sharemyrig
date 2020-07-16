@@ -9,6 +9,15 @@
   },
   "editor.formatOnSave": true,
   "cSpell.words": [
-    "Hrefs"
+    "ESNEXT",
+    "Hrefs",
+    "downlevel",
+    "lcov",
+    "sharemyrig",
+    "sourcemap",
+    "tslib",
+    "typechecking",
+    "Hrefs",
+    "downlevel"
   ]
 }
