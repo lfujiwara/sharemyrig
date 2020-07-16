@@ -23,6 +23,12 @@ export default class BuildController {
     )
     this.router.post('', celebrate({ [Segments.BODY]: validateBuildSchema }), errors(), BuildController.indexPost)
     this.router.put('', celebrate({ [Segments.BODY]: validateBuildSchema }), errors(), BuildController.indexPut)
+    this.router.delete(
+      '',
+      celebrate({ [Segments.QUERY]: Joi.object().keys({ _id: validateMongooseId.required() }) }),
+      errors(),
+      BuildController.indexDelete,
+    )
   }
 
   static async indexGet(request: GetBuildRequestDto, response: GetBuildResponseDto) {
@@ -57,6 +63,18 @@ export default class BuildController {
         await build.save()
         response.status(HttpStatus.OK).json(build.toObject({ versionKey: false }))
       }
+    } catch (e) {
+      console.error(e)
+      response.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    response.send()
+  }
+
+  static async indexDelete(request: express.Request & { query: Object & { _id: String } }, response: express.Response) {
+    try {
+      await Build.deleteOne({ _id: request.query._id }, (err: any) =>
+        err ? response.status(HttpStatus.NOT_FOUND) : response.status(HttpStatus.OK),
+      )
     } catch (e) {
       console.error(e)
       response.status(HttpStatus.INTERNAL_SERVER_ERROR)

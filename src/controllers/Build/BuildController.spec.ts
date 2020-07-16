@@ -37,7 +37,7 @@ describe('test the BuildController', () => {
 
   app.use('/', new BuildController().router)
 
-  it('perform create, read and update operations', async (done) => {
+  it('perform CRUD operations', async (done) => {
     mongoose.connect(await mongod.getConnectionString(), { useNewUrlParser: true, useUnifiedTopology: true })
 
     let response = await supertest(app).post('/').send(makeBuild()).type('application/json')
@@ -65,8 +65,18 @@ describe('test the BuildController', () => {
     expect(response.body instanceof Array).toBeTruthy()
     expect(response.body.length).toStrictEqual(1)
     expect(response.body.every((item: IBuild) => !!item._id)).toBeTruthy()
-    expect(response.body.every((item: IBuild) => !!item._id)).toBeTruthy()
     expect(Object.entries(updatedKeys).every(([k, v]) => response.body[0].cpu[k] === v))
+
+    response = await supertest(app).delete('/').query({ _id: response.body[0]._id }).type('application/json')
+    expect(response).toBeTruthy()
+    expect(response.status).toBe(HttpStatus.OK)
+
+    response = await supertest(app).get('/').type('application/json')
+    expect(response).toBeTruthy()
+    expect(response.body).toBeTruthy()
+    expect(response.status).toBe(HttpStatus.OK)
+    expect(response.body instanceof Array).toBeTruthy()
+    expect(response.body.length).toStrictEqual(0)
 
     done()
   })
