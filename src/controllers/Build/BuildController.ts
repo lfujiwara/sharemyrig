@@ -31,29 +31,25 @@ export default class BuildController {
     )
   }
 
-  static async indexGet(request: GetBuildRequestDto, response: GetBuildResponseDto) {
+  static async indexGet(request: GetBuildRequestDto, response: GetBuildResponseDto, next: express.NextFunction) {
     try {
       const builds = await Build.find(request.query)
       response.status(HttpStatus.OK).json(builds.map((build) => build.toObject({ versionKey: false })))
     } catch (e) {
-      console.error(e)
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR)
+      next(e)
     }
-    response.send()
   }
 
-  static async indexPost(request: CreateBuildRequestDto, response: CreateBuildResponseDto) {
+  static async indexPost(request: CreateBuildRequestDto, response: CreateBuildResponseDto, next: express.NextFunction) {
     try {
       const build = await Build.create(request.body)
       response.status(HttpStatus.CREATED).json(build.toObject({ versionKey: false }))
     } catch (e) {
-      console.error(e)
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR)
+      next(e)
     }
-    response.send()
   }
 
-  static async indexPut(request: CreateBuildRequestDto, response: CreateBuildResponseDto) {
+  static async indexPut(request: CreateBuildRequestDto, response: CreateBuildResponseDto, next: express.NextFunction) {
     try {
       const build = await Build.findById(request.body._id)
       if (!build) {
@@ -64,21 +60,21 @@ export default class BuildController {
         response.status(HttpStatus.OK).json(build.toObject({ versionKey: false }))
       }
     } catch (e) {
-      console.error(e)
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR)
+      next(e)
     }
-    response.send()
   }
 
-  static async indexDelete(request: express.Request & { query: Object & { _id: String } }, response: express.Response) {
+  static async indexDelete(
+    request: express.Request & { query: Object & { _id: String } },
+    response: express.Response,
+    next: express.NextFunction,
+  ) {
     try {
       await Build.deleteOne({ _id: request.query._id }, (err: any) =>
-        err ? response.status(HttpStatus.NOT_FOUND) : response.status(HttpStatus.OK),
+        err ? response.status(HttpStatus.NOT_FOUND).send() : response.status(HttpStatus.OK).send(),
       )
     } catch (e) {
-      console.error(e)
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR)
+      next(e)
     }
-    response.send()
   }
 }
