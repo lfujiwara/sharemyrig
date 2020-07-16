@@ -4,6 +4,7 @@ import supertest from 'supertest'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
 import BuildController from './BuildController'
+import { IBuild } from '../../models/Build'
 
 const makeBuild = () => ({
   cpu: { description: 'Ryzen 5 1600AF', price: 599.99, storeName: 'Kabum' },
@@ -56,6 +57,16 @@ describe('test the BuildController', () => {
     expect(response.status).toBe(HttpStatus.OK)
     expect(response.body._id).toBeTruthy()
     Object.entries(updatedKeys).forEach(([k, v]) => expect(response.body.cpu[k]).toStrictEqual(v))
+
+    response = await supertest(app).get('/').query({ _id: response.body._id }).type('application/json')
+    expect(response).toBeTruthy()
+    expect(response.body).toBeTruthy()
+    expect(response.status).toBe(HttpStatus.OK)
+    expect(response.body instanceof Array).toBeTruthy()
+    expect(response.body.length).toStrictEqual(1)
+    expect(response.body.every((item: IBuild) => !!item._id)).toBeTruthy()
+    expect(response.body.every((item: IBuild) => !!item._id)).toBeTruthy()
+    expect(Object.entries(updatedKeys).every(([k, v]) => response.body[0].cpu[k] === v))
 
     done()
   })

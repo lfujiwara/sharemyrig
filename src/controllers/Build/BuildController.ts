@@ -1,9 +1,13 @@
 import { celebrate, Segments, errors } from 'celebrate'
 import express from 'express'
 import HttpStatus from 'http-status-codes'
+import Joi from '@hapi/joi'
 import CreateBuildRequestDto from './dto/request/CreateBuildRequestDto'
 import Build, { validateBuildSchema } from '../../models/Build'
 import CreateBuildResponseDto from './dto/response/CreateBuildResponseDto'
+import GetBuildRequestDto from './dto/request/GetBuildRequestDto'
+import GetBuildResponseDto from './dto/response/GetBuildResponseDto'
+import { validateMongooseId } from '../../library'
 
 export default class BuildController {
   router: express.Router
@@ -11,8 +15,25 @@ export default class BuildController {
   constructor() {
     this.router = express.Router()
 
+    this.router.get(
+      '',
+      celebrate({ [Segments.QUERY]: Joi.object().keys({ _id: validateMongooseId }).unknown(true) }),
+      errors(),
+      BuildController.indexGet,
+    )
     this.router.post('', celebrate({ [Segments.BODY]: validateBuildSchema }), errors(), BuildController.indexPost)
     this.router.put('', celebrate({ [Segments.BODY]: validateBuildSchema }), errors(), BuildController.indexPut)
+  }
+
+  static async indexGet(request: GetBuildRequestDto, response: GetBuildResponseDto) {
+    try {
+      const builds = await Build.find(request.query)
+      response.status(HttpStatus.OK).json(builds.map((build) => build.toObject({ versionKey: false })))
+    } catch (e) {
+      console.error(e)
+      response.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    response.send()
   }
 
   static async indexPost(request: CreateBuildRequestDto, response: CreateBuildResponseDto) {

@@ -1,3 +1,3 @@
-export default interface GetBuildRequestDto {
-  _id: String
-}
+import { Request } from 'express'
+
+export default interface GetBuildRequestDto extends Request {}
